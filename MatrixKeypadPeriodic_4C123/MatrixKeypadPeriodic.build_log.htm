@@ -2,21 +2,57 @@
 <body>
 <pre>
 <h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.24.2.0
+Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: bengisu yücel yücel, cankaya uinversity, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.24.1
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 5 (build 528)
+Assembler:       Armasm.exe V5.06 update 5 (build 528)
+Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
+Library Manager: ArmAr.exe V5.06 update 5 (build 528)
+Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
+CPU DLL:         SARMCM3.DLL V5.24.1
+Dialog DLL:      DCM.DLL V1.16.0.0
+Target DLL:      lmidk-agdi.dll V???
+Dialog DLL:      TCM.DLL V1.32.0.0
+ 
 <h2>Project:</h2>
-C:\Dropbox\ArmBook\LaunchPad\LaunchPadware\MatrixKeypadPeriodic_4C123\MatrixKeypadPeriodic.uvproj
-Project File Date:  08/10/2014
+C:\Users\Bengisu\Desktop\projekey\MatrixKeypadPeriodic_4C123\MatrixKeypadPeriodic.uvproj
+Project File Date:  06/17/2021
 
 <h2>Output:</h2>
-Build target 'MatrixKeypadPeriodic'
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'MatrixKeypadPeriodic'
 assembling startup.s...
 compiling PLL.c...
 compiling matrix.c...
+matrix.c(57): error:  #20: identifier "uint32_t" is undefined
+  volatile uint32_t Counts = 0;
+KB: Unexpected type: 0
+error type>(64): error:  #20: identifier "uint32_t" is undefined
+  uint32_t HeartBeat;  // incremented every 25 ms
+matrix.c(69): error:  #20: identifier "uint32_t" is undefined
+  void SysTick_Init(uint32_t period){
+matrix.c(99): error:  #20: identifier "uint32_t" is undefined
+    uint32_t direction;
+matrix.c(112): error:  #20: identifier "int32_t" is undefined
+  char MatrixKeypad_Scan(int32_t *Num){
+matrix.c(115): error:  #20: identifier "int32_t" is undefined
+    int32_t j;
+matrix.c(143): error:  #20: identifier "int32_t" is undefined
+  void SysTick_Handler(void){  char thisKey; int32_t n;
+matrix.c: 0 warnings, 7 errors
 compiling MatrixMainTest.c...
-linking...
-Program Size: Code=1880 RO-data=72 RW-data=24 ZI-data=1152  
-".\MatrixKeypadPeriodic.axf" - 0 Error(s), 0 Warning(s).
-Clean started: Project: 'MatrixKeypadPeriodic'
-   deleting intermediate output files for target 'MatrixKeypadPeriodic'
+MatrixMainTest.c(49): error:  #5: cannot open source input file "inc/tm4c123gh6pm.h": No such file or directory
+  #include "inc/tm4c123gh6pm.h"
+MatrixMainTest.c: 0 warnings, 1 error
+".\MatrixKeypadPeriodic.axf" - 8 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

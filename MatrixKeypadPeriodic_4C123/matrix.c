@@ -47,7 +47,7 @@ Copyright 2014 by Jonathan W. Valvano, valvano@mail.utexas.edu
 // Pin 8 -> Row 3 (row starting with *)
 
 #include "FIFO.h"
-#include "inc/tm4c123gh6pm.h"
+#include "tm4c123gh6pm.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts

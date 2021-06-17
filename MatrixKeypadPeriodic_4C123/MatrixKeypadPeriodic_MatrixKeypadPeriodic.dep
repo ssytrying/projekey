@@ -1,0 +1,10 @@
+Dependencies for Project 'MatrixKeypadPeriodic', Target 'MatrixKeypadPeriodic': (DO NOT MODIFY !)
+F (.\startup.s)(0x60C761DE)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary--pd "__UVISION_VERSION SETA 524"--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
+F (.\PLL.c)(0x60C761DE)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_LM4F120H5QR-o .\pll.o --omf_browse .\pll.crf --depend .\pll.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BC994)
+I (PLL.h)(0x60C761DE)
+F (.\matrix.c)(0x60CB1B50)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_LM4F120H5QR-o .\matrix.o --omf_browse .\matrix.crf --depend .\matrix.d)
+I (FIFO.h)(0x60C761DE)
+I (tm4c123gh6pm.h)(0x609812EC)
+F (.\MatrixMainTest.c)(0x60C761DE)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --c99-IC:\Keil_v5\ARM\RV31\INC-IC:\Keil_v5\ARM\CMSIS\Include-IC:\Keil_v5\ARM\INC\Luminary-D__UVISION_VERSION="524" -Drvmdk -DPART_LM4F120H5QR-o .\matrixmaintest.o --omf_browse .\matrixmaintest.crf --depend .\matrixmaintest.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BC994)
