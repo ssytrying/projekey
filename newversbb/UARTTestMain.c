@@ -29,6 +29,10 @@
 #define NVIC_EN0_INT2           0x00000004  // Interrupt 2 enable
 #define NVIC_EN0_INT4           0x00000010  // Interrupt 4 enable
 
+int a = 0;
+int tekrarA = 0;
+int b = 0;
+int tekrarB = 0;
 //---------------------OutCRLF---------------------
 // Output a CR,LF to UART to go to a new line
 // Input: none
@@ -38,7 +42,7 @@ void OutCRLF(void){
   UART_OutChar(LF);
 }
 //debug code
-int a = 1;
+
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -67,17 +71,17 @@ void VectorButtons_Init(void){
   GPIO_PORTC_IM_R |= 0xF0;    // enable interrupt on PC4
                               // GPIO PortC=priority 2
   NVIC_PRI0_R = (NVIC_PRI0_R&0xFF00FFFF)|0x00400000; // bits 21-23
-  GPIO_PORTE_DIR_R &= ~0x1E;  // make PE4 in (PE4 button) (default setting)
-  GPIO_PORTE_AFSEL_R &= ~0x1E;// disable alt funct on PE4 (default setting)
-  GPIO_PORTE_DEN_R |= 0x1E;   // enable digital I/O on PE4
+  GPIO_PORTE_DIR_R &= ~0x3C;  // make PE4 in (PE4 button) (default setting)
+  GPIO_PORTE_AFSEL_R &= ~0x3C;// disable alt funct on PE4 (default setting)
+  GPIO_PORTE_DEN_R |= 0x3C;   // enable digital I/O on PE4
                               // configure PE4 as GPIO (default setting)
   GPIO_PORTE_PCTL_R = (GPIO_PORTE_PCTL_R&0xFFF0FFFF)+0x00000000;
-  GPIO_PORTE_AMSEL_R &= ~0x1E;// disable analog functionality on PE4 (default setting)
-  GPIO_PORTE_IS_R &= ~0x1E;   // PE4 is edge-sensitive (default setting)
-  GPIO_PORTE_IBE_R &= ~0x1E;  // PE4 is not both edges (default setting)
-  GPIO_PORTE_IEV_R |= 0x1E;   // PE4 rising edge event
-  GPIO_PORTE_ICR_R = 0x1E;    // clear flag4
-  GPIO_PORTE_IM_R |= 0x1E;    // enable interrupt on PE4
+  GPIO_PORTE_AMSEL_R &= ~0x3C;// disable analog functionality on PE4 (default setting)
+  GPIO_PORTE_IS_R &= ~0x3C;   // PE4 is edge-sensitive (default setting)
+  GPIO_PORTE_IBE_R &= ~0x3C;  // PE4 is not both edges (default setting)
+  GPIO_PORTE_IEV_R |= 0x3C;   // PE4 rising edge event
+  GPIO_PORTE_ICR_R = 0x3C;    // clear flag4
+  GPIO_PORTE_IM_R |= 0x3C;    // enable interrupt on PE4
                               // GPIO PortE=priority 2
   NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF00)|0x00000040; // bits 5-7
                               // enable interrupts 2 and 4 in NVIC
@@ -104,9 +108,28 @@ void GPIOPortC_Handler(void){
 		UART_OutString("PC6\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
+		if (tekrarA != 0){
+			if (a == 1){
+				UART_OutString("A Harfi\n");
+				a = 0;
+				tekrarA =0;
+			}else{
+				tekrarA = 1;
+				a = 1;
+			}
+		}else if (tekrarB != 0){
+			if (b == 1){
+				UART_OutString("B Harfi\n");
+				b = 0;
+				tekrarB =0;
+			}else{
+				tekrarB = 1;
+				b = 1;
+			}
+		}			
     GPIO_PORTC_ICR_R = 0x80;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		UART_OutString("PC7\n");
+		//UART_OutString("PC7\n");
   }	
 	else{
 		volatile uint32_t asd = GPIO_PORTE_RIS_R;
@@ -115,15 +138,36 @@ void GPIOPortC_Handler(void){
   SW1 = 1;                    // signal SW1 occurred
 }
 void GPIOPortE_Handler(void){
-  if(GPIO_PORTE_RIS_R&0x01){  // poll PE1
-    GPIO_PORTE_ICR_R = 0x01;  // acknowledge flag4
+  if(GPIO_PORTE_RIS_R&0x20){  // poll PE5
+		if (tekrarA != 0){
+			if (a == 1){
+				//UART_OutString("A Harfi\n");
+				a = 0;
+				tekrarA =0;
+			}else {
+				tekrarA = 1;
+				a = 1;
+			}
+		}	
+		tekrarA = 1;
+    GPIO_PORTE_ICR_R = 0x20;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		UART_OutString("PE1\n");
+		//UART_OutString("PE5\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x04){  // poll PE2
+		if (tekrarB != 0){
+			if (b == 1){
+				//UART_OutString("B Harfi\n");
+				b = 0;
+				tekrarB =0;
+			}else{
+				tekrarB = 1;
+				b = 1;
+			}
+		}	
     GPIO_PORTE_ICR_R = 0x04;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		UART_OutString("PE2\n");
+		//UART_OutString("PE2\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x08){  // poll PE3
     GPIO_PORTE_ICR_R = 0x08;  // acknowledge flag4
@@ -138,7 +182,7 @@ void GPIOPortE_Handler(void){
 	else{
 		volatile uint32_t asd = GPIO_PORTE_RIS_R;
 	}
-  GPIO_PORTE_ICR_R = 0x1E;    // acknowledge flag4
+  GPIO_PORTE_ICR_R = 0x3C;  // acknowledge flag4
   SW2 = 1;                    // signal SW2 occurred
 	
 }
