@@ -1092,7 +1092,7 @@ ARM Macro Assembler    Page 17
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4 --apcs=interw
 ork --depend=.\startup.d -o.\startup.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\A
 RM\CMSIS\Include -IC:\Keil_v5\ARM\INC\Luminary --predefine="__EVAL SETA 1" --pr
-edefine="__UVISION_VERSION SETA 532" --list=.\startup.lst startup.s
+edefine="__UVISION_VERSION SETA 524" --list=.\startup.lst startup.s
 
 
 
