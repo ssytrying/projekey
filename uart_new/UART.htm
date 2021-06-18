@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\UART.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\UART.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Jun 18 14:13:29 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Jun 18 11:50:16 2021
 <BR><P>
 <H3>Maximum Stack Usage =         12 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-GPIOPortE_Handler &rArr; UART_OutString
+GPIOPortC_Handler &rArr; UART_OutString
 <P>
 <H3>
 Functions with no stack information
@@ -775,12 +775,14 @@ Global Symbols
 
 <P><STRONG><a name="[c9]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[f]"></a>GPIOPortC_Handler</STRONG> (Thumb, 130 bytes, Stack size 8 bytes, uarttestmain.o(i.GPIOPortC_Handler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GPIOPortC_Handler
+<P><STRONG><a name="[f]"></a>GPIOPortC_Handler</STRONG> (Thumb, 190 bytes, Stack size 8 bytes, uarttestmain.o(i.GPIOPortC_Handler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = GPIOPortC_Handler &rArr; UART_OutString
+</UL>
+<BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutString
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
-<P><STRONG><a name="[11]"></a>GPIOPortE_Handler</STRONG> (Thumb, 380 bytes, Stack size 8 bytes, uarttestmain.o(i.GPIOPortE_Handler))
+<P><STRONG><a name="[11]"></a>GPIOPortE_Handler</STRONG> (Thumb, 190 bytes, Stack size 8 bytes, uarttestmain.o(i.GPIOPortE_Handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = GPIOPortE_Handler &rArr; UART_OutString
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutString
@@ -815,6 +817,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_OutChar
 </UL>
 <BR>[Called By]<UL><LI><a href="#[11]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPortE_Handler
+<LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOPortC_Handler
 </UL>
 
 <P><STRONG><a name="[96]"></a>VectorButtons_Init</STRONG> (Thumb, 338 bytes, Stack size 8 bytes, uarttestmain.o(i.VectorButtons_Init))

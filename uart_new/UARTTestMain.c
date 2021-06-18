@@ -31,10 +31,6 @@
 
 int a = 0;
 int tekrarA = 0;
-int b = 0;
-int tekrarB = 0;
-int tekrarBl = 0;
-int abbay[16]={0};
 //---------------------OutCRLF---------------------
 // Output a CR,LF to UART to go to a new line
 // Input: none
@@ -97,43 +93,31 @@ void GPIOPortC_Handler(void){
   if(GPIO_PORTC_RIS_R&0x10){  // poll PC4
     GPIO_PORTC_ICR_R = 0x10;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PC4\n");
+		UART_OutString("PC4\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
     GPIO_PORTC_ICR_R = 0x20;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PC5\n");
+		UART_OutString("PC5\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
     GPIO_PORTC_ICR_R = 0x40;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PC6\n");
+		UART_OutString("PC6\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
-		GPIO_PORTC_ICR_R = 0x80;  // acknowledge flag4
+		if (tekrarA != 0){
+			if (a == 1){
+				UART_OutString("A Harfi\n");
+				a = 0;
+				tekrarA =0;
+			}else{
+				tekrarA = 1;
+				a = 1;
+			}
+		}			
+    GPIO_PORTC_ICR_R = 0x80;  // acknowledge flag4
     SW1 = 1;                  // signal SW1 occurred
-//	if (tekrarBl != 0){
-//			if (b == 1){
-//				UART_OutString("B Harfi\n");
-//				b = 0;
-//				tekrarBl =0;
-//			}else{
-//				tekrarBl = 1;
-//				b = 1;
-//			}
-//		}			
-//		if (tekrarA != 0){
-//			if (a == 1){
-//				//UART_OutString("A Harfi\n");
-//				a = 0;
-//				tekrarA =0;
-//			}else{
-//				tekrarA = 1;
-//				a = 1;
-//			}
-//		}		
-//    GPIO_PORTC_ICR_R = 0x80;  // acknowledge flag4
-//    SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PC7\n");
   }	
 	else{
@@ -144,89 +128,41 @@ void GPIOPortC_Handler(void){
 }
 void GPIOPortE_Handler(void){
   if(GPIO_PORTE_RIS_R&0x20){  // poll PE5
-//		if (tekrarA != 0){
-//			if (a == 1){
-//				//UART_OutString("A Harfi\n");
-//				a = 0;
-//				tekrarA =0;
-//			}else {
-//				tekrarA = 1;
-//				a = 1;
-//			}
-//		}	
-//		tekrarA = 1;
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
-			UART_OutString("1");
+		if (tekrarA != 0){
+			if (a == 1){
+				//UART_OutString("A Harfi\n");
+				a = 0;
+				tekrarA =0;
+			}else {
+				tekrarA = 1;
+				a = 1;
+			}
 		}	
-		else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
-			UART_OutString("2");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
-			UART_OutString("3");
-		}		
-		else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
-			UART_OutString("A");
-		}				
+		tekrarA = 1;
     GPIO_PORTE_ICR_R = 0x20;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
+    SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PE5\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x04){  // poll PE2
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
-			UART_OutString("4");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
-			UART_OutString("5");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
-			UART_OutString("6");
-		}		
-		else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
-			UART_OutString("B");
-		}						
     GPIO_PORTE_ICR_R = 0x04;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PE2\n");
+    SW1 = 1;                  // signal SW1 occurred
+		UART_OutString("PE2\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x08){  // poll PE3
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
-			UART_OutString("7");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
-			UART_OutString("8");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
-			UART_OutString("9");
-		}		
-		else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
-			UART_OutString("C");
-		}				
     GPIO_PORTE_ICR_R = 0x08;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PE3\n");
+    SW1 = 1;                  // signal SW1 occurred
+		UART_OutString("PE3\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x10){  // poll PE4
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
-			UART_OutString("*");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
-			UART_OutString("0");
-		}	
-		else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
-			UART_OutString("#");
-		}		
-		else if(GPIO_PORTC_RIS_R&0x80){  // poll PC7
-			UART_OutString("D");
-		}						
     GPIO_PORTE_ICR_R = 0x10;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
-		//UART_OutString("PE4\n");
+    SW1 = 1;                  // signal SW1 occurred
+		UART_OutString("PE4\n");
   }
 	else{
 		volatile uint32_t asd = GPIO_PORTE_RIS_R;
 	}
   GPIO_PORTE_ICR_R = 0x3C;  // acknowledge flag4
-  //SW2 = 1;                    // signal SW2 occurred
+  SW2 = 1;                    // signal SW2 occurred
 	
 }
 
