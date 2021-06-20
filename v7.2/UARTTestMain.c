@@ -3,7 +3,7 @@
  *   Authors: Bengisu YUCEL, Seyit Semih YIGITARSLAN     Date: June 20, 2021 *
  *                                                                           *
  *   This file takes the inputs from the keypad, and shows this values in    * 
- *   Teraterm via UART. Also, adding, and multiplying                        *
+ *   Teraterm via UART. Also, additionitioning, and multiplicationing                        *
  *	 operations exists.                                                      *
  *                                                                           *
  *   REVISION HISTORY                                                        *
@@ -19,18 +19,20 @@
 #define NVIC_EN0_INT2           0x00000004  // Interrupt 2 enable
 #define NVIC_EN0_INT4           0x00000010  // Interrupt 4 enable
 
-int a = 0;
-int tekrarA = 0;
-int b = 0;
-int tekrarB = 0;
-int tekrarBl = 0;
-int arti = 0;
-int abbay[16]={0};																							// initilaize whole key with 0, it will use if 
-int esit = 0;
-int carpma = 1;
-int bolme = 1;
-int numArray[16] ={4, 5, 6, 0, 7, 8, 9,0,0,0,0,0,1,2, 3, 0};
+int additionition = 0;                        // additionition process
+int substraction = 0;                        // substract process
+int keyElements[16]={0};					   //	keypad elements	controlled the pressing repeat (initilaize whole key with 0) if it is pressed, it's value will one.
+//int equal = 0;  it is written in function the equalivent process
+int multiplication = 1;                      // multiplicationing process
+int division = 1;                       // division process
+int numArray[16] ={4, 5, 6, 0, 7, 8, 9,0,0,0,0,0,1,2, 3, 0};      // {these are 4,5,6,B,7,8,9,C,*,0,3,#,D,1,2,3,A}
 //---------------------OutCRLF---------------------
+/* -------------------------------------------------------------------------- *
+ *                                                                            *
+ *   this part is for UART newline process its copied from Valvano's Code.    *
+ *                                                                            *
+ * -------------------------------------------------------------------------- */
+
 // Output a CR,LF to UART to go to a new line
 // Input: none
 // Output: none
@@ -61,9 +63,6 @@ void bekle(){
 	GPIO_PORTC_ICR_R = 0xF0;		//Acknowledge Port C, and it can take new E port values as PC4, PC5, PC6, PC7
 }
 	
-// global variables visible in Watch window of debugger
-// set when corresponding button pressed
-volatile uint32_t SW1, SW2;
 
 void calculateDivide(int k,int l){
 	if(l == 0){
@@ -76,7 +75,7 @@ void calculateDivide(int k,int l){
 	else{
 		int res1 = (k*10)/l;
 		int temp1 = res1/10;
-		UART_OutString("Result: ");	
+		UART_OutString(" %_% Result: ");	
 		UART_OutUDec(k);		
 		UART_OutString(" / ");	
 		UART_OutUDec(l);	
@@ -90,78 +89,99 @@ void calculateDivide(int k,int l){
 }
 /* -------------------------------------------------------------------------- *
  *                                                                            *
- *   bilmem() is taking the values from keypad as "1", "2", "3", "4", "A"etc. *
+ *   joker() is taking the values from keypad as "1", "2", "3", "4", "A"etc. *
  *   "1", "2", "3", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "*",    *
  *   "#" values.                                                              *
  *                                                                            *
  * -------------------------------------------------------------------------- */
 
-void bilmem(int *array, int klm){
+void joker(int *array, int klm){
 	int i= 0;
-	int esit;
+	int equal; 
 	for (i = 0; i< 16; i++){
-		if(klm == 15){						// if user entered the "A" value to make adding operation from keypad, jump this condition.
-			if(array[i] == 1){			// 
-				arti = numArray[i];		// arti degeri numArray(numarraydaki deger) degerine atandi			
+		if(klm == 15){						// if user entered the "A" value to make additionitioning operation from keypad, jump this condition.
+			if(array[i] == 1){			 
+				additionition = numArray[i];	  //additionition gets the value	which is before the "A" pressed	
 			}
-			numArray[15] = 1; 			// make numArray's adding operator character 1 to imply function that	adding is occured
+			numArray[15] = 1; 			// make numArray's additionitioning operator character 1 to imply function that	additionitioning is occured
 		}
 		else if(klm == 8){				//if user entered the "*" value to make multiplication operation from keypad, jump this condition.
 			if(array[i] == 1){
-				carpma = numArray[i]; // carpma value makes equals to numArray's wanted value to take user's number input.		
+				multiplication = numArray[i]; // multiplication value makes equals to numArray's wanted value to take user's number input.		
 			}
-			numArray[8] = 1; //numArrayde carpma isleminin oldugu yer 1 oldu ve en son carpma isleminin yapildigi anlasiliyor.
+			numArray[8] = 1;        //In the numArray, the place where the multiplication process is 1 and it is understood that the last multiplication is done.
 		}		
 		else if(klm == 3){				//if user entered the "B" value to make division operation from keypad, jump this condition.
 			if(array[i] == 1){
-				bolme = numArray[i]; // carpma value makes equals to numArray's wanted value to take user's number input.		
+				division = numArray[i]; // multiplication value makes equals to numArray's wanted value to take user's number input.		
 			}
-			numArray[3] = 1; //numArrayde bolme isleminin oldugu yer 1 oldu ve en son bolme isleminin yapildigi anlasiliyor.
+			numArray[3] = 1;       //In the numArray, the place where the division process is 1 and it is understood that the last division is done.
+		}		
+		else if(klm == 7){				//if user entered the "B" value to make division operation from keypad, jump this condition.
+			if(array[i] == 1){
+				substraction = numArray[i]; // multiplication value makes equals to numArray's wanted value to take user's number input.		
+			}
+			numArray[7] = 1;       //In the numArray, the place where the division process is 1 and it is understood that the last division is done.
 		}			
-		else if(klm == 11){
+		else if(klm == 11){      //
 			if(array[i] == 1){			
 				OutCRLF();
-				if(numArray[15] == 1){												// enter the adding operation
-					esit = arti + numArray[i];									// making adding operation
-					UART_OutString("Result: ");											
-					UART_OutUDec(arti); UART_OutString(" + ");
+				if(numArray[15] == 1){												// enter the additionitioning operation
+					equal = additionition + numArray[i];									// making additionitioning operation
+					UART_OutString("(¯L¯) Result: ");											
+					UART_OutUDec(additionition); UART_OutString(" + ");
 					UART_OutUDec(numArray[i]);									// into Teraterm, write the equation
 					UART_OutString(" = ");
-					UART_OutUDec(esit);					
-					numArray[15] = 0;														// adding operation is completed, makes 0 to "+"'s value to imply not do again adding operation
+					UART_OutUDec(equal);					
+					numArray[15] = 0;														// additionitioning operation is completed, makes 0 to "+"'s value to imply not do again additionitioning operation
 				}else if(numArray[8] == 1){										// enter the multiplication operation
-					esit = carpma * numArray[i];								//making adding operation						
-					UART_OutString("Result: ");
-					UART_OutUDec(carpma); UART_OutString(" * ");
+					equal = multiplication * numArray[i];								//making additionitioning operation						
+					UART_OutString("*u* Result:  ");
+					UART_OutUDec(multiplication); UART_OutString(" * ");
 					UART_OutUDec(numArray[i]);									// into Teraterm, write the equation						
 					UART_OutString(" = ");
-					UART_OutUDec(esit);	
+					UART_OutUDec(equal);	
 					numArray[8] = 0;														// multiplication operation is completed, makes 0 to "*"'s value to imply not do again multiplication operation
 					
 				}else if(numArray[3] == 1){										// enter the multiplication operation											
-					calculateDivide(bolme,numArray[i]);				// make division operation		
+					calculateDivide(division,numArray[i]);				// make division operation		
 					numArray[3] = 0;														// multiplication operation is completed, makes 0 to "*"'s value to imply not do again multiplication operation
+				}else if(numArray[7] == 1){												// enter the additionitioning operation
+					if( substraction >= numArray[i]){
+						equal = substraction - numArray[i];									// making substraction operation
+						UART_OutString(":-> Result: ");											
+						UART_OutUDec(substraction); UART_OutString(" - ");
+						UART_OutUDec(numArray[i]);									// into Teraterm, write the equation
+						UART_OutString(" = ");
+						UART_OutUDec(equal);					
+					}else{
+						equal = numArray[i] - substraction;									// making substraction operation
+						UART_OutString(" :-< Result: ");											
+						UART_OutUDec(substraction); UART_OutString(" - ");
+						UART_OutUDec(numArray[i]);									// into Teraterm, write the equation
+						UART_OutString(" = -");
+						UART_OutUDec(equal);							
+					}
+					numArray[7] = 0;														// additionitioning operation is completed, makes 0 to "+"'s value to imply not do again additionitioning operation
 				}else{
-					UART_OutString("No adding, multiplication or division is found! ");		// after the "D" is entered, if adding or multiplication is not occured, print error message
+					UART_OutString("No operation ¯\\_(^'.'^)_\\¯");		// after the "D" is entered, if additionitioning or multiplication is not occured, print error message
 				}
 			}
 		}		
-		else if(i != klm){
+		else if(i != klm){                                //if this key is not pressed, then its value is zero.
 			array[i] = 0;
 		}else{
-			array[klm] = 1;
+			array[klm] = 1;                                 //if this key is pressed, then its value is one.
 		}
 	}
 	OutCRLF();
-	bekle();
+	bekle();                                           //delaying
 }
 
 void MatrixKeypad_Init(void){
   DisableInterrupts();
   // activate port C and port E
   SYSCTL_RCGCGPIO_R |= 0x14;  // enable ports C and E
-  SW1 = 0;                    // clear semaphores
-  SW2 = 0;
   GPIO_PORTC_DIR_R &= ~0xF0;  // make PC4 in (PC4 button) (default setting)
   GPIO_PORTC_AFSEL_R &= ~0xF0;// disable alt funct on PC4 (default setting)
   GPIO_PORTC_DEN_R |= 0xF0;   // enable digital I/O on PC4
@@ -197,12 +217,10 @@ void GPIOPortC_Handler(void){
 	//GPIO_PORTC_ICR_R = 0xF0;
   if(GPIO_PORTC_RIS_R&0x10){  // poll PC4
     GPIO_PORTC_ICR_R = 0x10;  // acknowledge flag4
-    SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PC4\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x20){  // poll PC5
     GPIO_PORTC_ICR_R = 0x20;  // acknowledge flag4
-    SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PC5\n");
   }	
   else if(GPIO_PORTC_RIS_R&0x40){  // poll PC6
@@ -213,10 +231,9 @@ void GPIOPortC_Handler(void){
 		GPIO_PORTC_ICR_R = 0x80;  // acknowledge flag4
   }	
 	else{
-		volatile uint32_t errorCport = GPIO_PORTC_RIS_R;							// if unexpected Cport is entered, detect it
+		volatile uint32_t errorCport = GPIO_PORTC_RIS_R;							// if unexpected Cport is entered, detect it.
 	}
 	GPIO_PORTC_ICR_R = 0xF0;
-  //SW1 = 1;                    // signal SW1 occurred
 }
 
 // PE5 && PC4 -> "1"
@@ -249,92 +266,89 @@ void GPIOPortE_Handler(void){
 //			}
 //		}	
 //		tekrarA = 1;
-		if(GPIO_PORTC_RIS_R&0x10 && abbay[12] == 0){  // poll PC4      // signal SW1 occurred
+		if(GPIO_PORTC_RIS_R&0x10 && keyElements[12] == 0){       // poll PC4    
 			UART_OutString("1");
-			bilmem(abbay,12);
+			joker(keyElements,12);                                 //in joker function, the twelfth element in array is "1".     
 		}	
-		else if(GPIO_PORTC_RIS_R&0x20 && abbay[13] == 0){  // poll PC5
+		else if(GPIO_PORTC_RIS_R&0x20 && keyElements[13] == 0){  // poll PC5
 			UART_OutString("2");
-			bilmem(abbay,13);
+			joker(keyElements,13);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x40 && abbay[14] == 0){  // poll PC6
+		else if(GPIO_PORTC_RIS_R&0x40 && keyElements[14] == 0){  // poll PC6
 			UART_OutString("3");
-			bilmem(abbay,14);
+			joker(keyElements,14);
 		}		
-		else if(GPIO_PORTC_RIS_R&0x80 && abbay[15] == 0){  // poll PC7
+		else if(GPIO_PORTC_RIS_R&0x80 && keyElements[15] == 0){  // poll PC7
 			UART_OutString("A");
-			bilmem(abbay,15);
+			joker(keyElements,15);
 		}				
     GPIO_PORTE_ICR_R = 0x20;  // acknowledge flag4
 		//UART_OutString("PE5\n");
   }	
   else if(GPIO_PORTE_RIS_R&0x04){  // poll PE2
-		if(GPIO_PORTC_RIS_R&0x10 && abbay[0] == 0){  // poll PC4      // signal SW1 occurred
+		if(GPIO_PORTC_RIS_R&0x10 && keyElements[0] == 0){  // poll PC4      
 			UART_OutString("4");
-			bilmem(abbay,0);
+			joker(keyElements,0);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x20 && abbay[1] == 0){  // poll PC5
+		else if(GPIO_PORTC_RIS_R&0x20 && keyElements[1] == 0){  // poll PC5
 			UART_OutString("5");
-			bilmem(abbay,1);
+			joker(keyElements,1);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x40 && abbay[2] == 0){  // poll PC6
+		else if(GPIO_PORTC_RIS_R&0x40 && keyElements[2] == 0){  // poll PC6
 			UART_OutString("6");
-			bilmem(abbay,2);
+			joker(keyElements,2);
 		}		
-		else if(GPIO_PORTC_RIS_R&0x80 && abbay[3] == 0){  // poll PC7
+		else if(GPIO_PORTC_RIS_R&0x80 && keyElements[3] == 0){  // poll PC7
 			UART_OutString("B");
-			bilmem(abbay,3);
+			joker(keyElements,3);
 		}						
     GPIO_PORTE_ICR_R = 0x04;  // acknowledge flag4
 		//UART_OutString("PE2\n");
   }	
-  else if(GPIO_PORTE_RIS_R&0x08 && abbay[4] == 0){  // poll PE3
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
+  else if(GPIO_PORTE_RIS_R&0x08 && keyElements[4] == 0){  // poll PE3
+		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      
 			UART_OutString("7");
-			bilmem(abbay,4);
+			joker(keyElements,4);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x20 && abbay[5] == 0){  // poll PC5
+		else if(GPIO_PORTC_RIS_R&0x20 && keyElements[5] == 0){  // poll PC5
 			UART_OutString("8");
-			bilmem(abbay,5);
+			joker(keyElements,5);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x40 && abbay[6] == 0){  // poll PC6
+		else if(GPIO_PORTC_RIS_R&0x40 && keyElements[6] == 0){  // poll PC6
 			UART_OutString("9");
-			bilmem(abbay,6);
+			joker(keyElements,6);
 		}		
-		else if(GPIO_PORTC_RIS_R&0x80 && abbay[7] == 0){  // poll PC7
+		else if(GPIO_PORTC_RIS_R&0x80 && keyElements[7] == 0){  // poll PC7
 			UART_OutString("C");
-			bilmem(abbay,7);
+			joker(keyElements,7);
 		}				
     GPIO_PORTE_ICR_R = 0x08;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PE3\n");
   }	
-  else if(GPIO_PORTE_RIS_R&0x10 && abbay[8] == 0){  // poll PE4
-		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      // signal SW1 occurred
+  else if(GPIO_PORTE_RIS_R&0x10 && keyElements[8] == 0){  // poll PE4
+		if(GPIO_PORTC_RIS_R&0x10){  // poll PC4      
 			UART_OutString("*");
-			bilmem(abbay,8);
+			joker(keyElements,8);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x20 && abbay[9] == 0){  // poll PC5
+		else if(GPIO_PORTC_RIS_R&0x20 && keyElements[9] == 0){  // poll PC5
 			UART_OutString("0");
-			bilmem(abbay,9);
+			joker(keyElements,9);
 		}	
-		else if(GPIO_PORTC_RIS_R&0x40 && abbay[10] == 0){  // poll PC6
+		else if(GPIO_PORTC_RIS_R&0x40 && keyElements[10] == 0){  // poll PC6
 			UART_OutString("#");
-			bilmem(abbay,10);
+			joker(keyElements,10);
 		}		
-		else if(GPIO_PORTC_RIS_R&0x80 && abbay[11] == 0){  // poll PC7
+		else if(GPIO_PORTC_RIS_R&0x80 && keyElements[11] == 0){  // poll PC7
 			UART_OutString("D");
-			bilmem(abbay,11);
+			joker(keyElements,11);
 		}						
     GPIO_PORTE_ICR_R = 0x10;  // acknowledge flag4
-    //SW1 = 1;                  // signal SW1 occurred
 		//UART_OutString("PE4\n");
   }
 	else{
 		volatile uint32_t asd = GPIO_PORTE_RIS_R;
 	}
   GPIO_PORTE_ICR_R = 0x3C;  // acknowledge flag4
-  //SW2 = 1;                    // signal SW2 occurred
 	
 }
 
@@ -346,36 +360,12 @@ int main(void){
 
   PLL_Init();       // 50  MHz
   UART_Init();      // initialize UART
-  OutCRLF();				// Jump new line
-/*
-  for(ch='A'; ch<='Z'; ch=ch+1){// print the uppercase alphabet
-    UART_OutChar(ch);
-  }
-  OutCRLF();
-  UART_OutChar(' ');
-  for(ch='a'; ch<='z'; ch=ch+1){// print the lowercase alphabet
-    UART_OutChar(ch);
-  }
-  OutCRLF();
-  UART_OutChar('-');
-  UART_OutChar('-');
-  UART_OutChar('>');
-*/
 	MatrixKeypad_Init();
+  OutCRLF();				// Jump new line
+	UART_OutString("Welcome  (^3^)");
+  OutCRLF();				// Jump new line
   while(1){
     WaitForInterrupt();							// wait until the user press the key from matrix keypad
   }		
-/*  while(1){
-    UART_OutString("InString: ");
-    UART_InString(string,19);
-    UART_OutString(" OutString="); UART_OutString(string); OutCRLF();
 
-    UART_OutString("InUDec: ");  n=UART_InUDec();
-    UART_OutString(" OutUDec="); UART_OutUDec(n); OutCRLF();
-
-    UART_OutString("InUHex: ");  n=UART_InUHex();
-    UART_OutString(" OutUHex="); UART_OutUHex(n); OutCRLF();
-
-  }
-*/
 }
